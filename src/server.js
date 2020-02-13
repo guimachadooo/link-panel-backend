@@ -62,4 +62,4 @@ app.use(routes);
 
 //apos iniciar o cors, leitura json e rotas no express,
 //o server escuta as requisições na porta 7777
-server.listen(7779);
+server.listen(process.env.PORT || 5000)
