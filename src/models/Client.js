@@ -66,6 +66,7 @@ const ClientSchema = new Schema(
     niche: String,
     status: Number,
     version: String,
+    maintenance: Number,
     permissions: [
       {
         type: Schema.Types.ObjectId,

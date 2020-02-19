@@ -54,8 +54,10 @@ routes.post('/panel/categories/:categoryId/delete', CategoryController.delete);
 routes.get('/panel/clients', ClientController.index);
 routes.post('/panel/profile', ClientController.findClient);
 // routes.post('/panel/:userId/changePlan', ClientController.changePlan);
-routes.post('/panel/clients', ClientController.store);
-routes.post('/panel/clients/:clientId', ClientController.update);
+routes.post('/panel/viewclient', ClientController.client);
+routes.post('/panel/client/new', ClientController.store);
+routes.post('/panel/client/:clientId', ClientController.update);
+routes.post('/panel/client/maintenance/:clientId', ClientController.maintenance);
 
 routes.delete('/panel/clients/:clientId', ClientController.delete);
 // end clients

@@ -81,7 +81,7 @@ module.exports = {
     var db = localStorage.getItem("db");
     const Post = require("../models/Post")(db); //chamando o model Post com o db
 
-    mongoose.set('useFindAndModify', false);
+    mongoose.set('useUnifiedTopology', true);
 
     //encontra o post e atualiza com o req.body
     Post.findByIdAndUpdate(req.params.postId, req.body, { new: true })

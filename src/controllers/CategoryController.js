@@ -22,7 +22,7 @@ module.exports = {
     .sort({ updatedAt: "desc" });
 
     if (categories.length == 0) {
-      return res.json("No categories to be listed.");
+      return res.json({ msg: "No categories to be listed." });
     }
     //se tem categorias retorna eles
     return res.json(categories);

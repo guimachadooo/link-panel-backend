@@ -4,6 +4,7 @@ controller Client - backend link-panel
 gerencia todos os clientes da base
 */
 
+const localStorage = require("./localStorage");
 const mongoose = require('mongoose')
 
 module.exports = {
@@ -31,6 +32,26 @@ module.exports = {
     return res.send(find);
   },
 
+  //client lista o cadastro do cliente passado para edição
+  async client(req, res) {
+    //o localStorage do node recebe o db do localStorage do front
+    //e salva ele aqui para tratar no backend, talvez websocket ajude
+    localStorage.setItem("db", req.body.db);
+    var db = localStorage.getItem("db");
+    const Client = require("../models/Client")(db); //chamando o model Client com o db
+    const clientId = req.body.clientId
+
+    mongoose.set('useUnifiedTopology', true);
+
+    const client = await Client.findOne({ userId: clientId });
+
+    if (client.length == 0) {
+      return res.json({ msg: "Cannot found this client." });
+    }
+    //se encontrou client, retorna ele
+    return res.json(client);
+  },
+
   //store adiciona um novo cliente na base
   async store(req, res) {
     const {
@@ -50,7 +71,8 @@ module.exports = {
       expires,
       niche,
       status,
-      version
+      version,
+      maintenance
     } = req.body;
 
     const Client = require("../models/Client")('link-panel');
@@ -77,7 +99,8 @@ module.exports = {
       expires,
       niche,
       status,
-      version
+      version,
+      maintenance: 1
     });
 
     return res.json({ msg: `Client ${name} added successfully.` });
@@ -95,7 +118,7 @@ module.exports = {
     const Client = require("../models/Client")('link-panel');
     const User = require("../models/User")('link-panel');
     //encontra o cliente e atualiza com req.body
-    mongoose.set('useFindAndModify', false);
+    mongoose.set('useUnifiedTopology', true);
 
     Client.findOne({ userId: req.params.clientId })
       .then(client => {
@@ -141,6 +164,46 @@ module.exports = {
           });
         });
       })    
+  },
+
+
+  //maintenance atualiza o cliente com os parametros informados
+  async maintenance(req, res) {
+    // Validate Request
+    /*if(!req.body.name) {
+            return res.status(400).send({
+                msg: "User name cannot be empty."
+            });
+        }*/
+
+    const Client = require("../models/Client")('link-panel');
+    //encontra o cliente e atualiza com req.body
+    mongoose.set('useUnifiedTopology', true);
+
+    var clientId = req.params.clientId
+
+    Client.findByIdAndUpdate(clientId, req.body, { new: true })
+    .then(upclient => {
+      // console.log(client);
+      if (!upclient) {
+        return res.status(404).send({
+          error: "Client not found with id " + clientId
+        });
+      }
+
+      res.send({ msg: "Atualizado..." + upclient.maintenance });
+     
+    })
+    .catch(err => {
+      if (err.kind === "ObjectId") {
+        return res.status(404).send({
+          error: "Client not found with id " + clientId
+        });
+      }
+      return res.status(500).send({
+        error: "Error updating client with id " + clientId
+      });
+    });  
   },
 
   //delete remove o cliente da base

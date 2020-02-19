@@ -21,7 +21,7 @@ module.exports = {
     const authors = await Author.find();
 
     if (authors.length == 0) {
-      return res.json({ error: "No authors to be listed." });
+      return res.json({ msg: "No authors to be listed." });
     }
     //se tem autores retorna eles
     return res.json(authors);
